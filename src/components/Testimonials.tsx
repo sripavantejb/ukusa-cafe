@@ -48,11 +48,6 @@ const testimonials = [
 function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handlePrev = () =>
-    setActiveIndex(idx => (idx === 0 ? testimonials.length - 1 : idx - 1));
-  const handleNext = () =>
-    setActiveIndex(idx => (idx === testimonials.length - 1 ? 0 : idx + 1));
-
   return (
     <div className="min-h-[70vh] bg-[#F6F5F3] flex flex-col pt-24 pb-16 items-center px-2">
       {/* Title and decor */}
@@ -66,15 +61,6 @@ function Testimonials() {
 
       {/* Testimonial Card */}
       <div className="relative flex items-center justify-center w-full">
-        {/* Left arrow */}
-        <button
-          className="absolute left-0 z-10 bg-white rounded-full shadow-md w-10 h-10 flex items-center justify-center text-[#a6b696] hover:scale-110 transition-transform"
-          onClick={handlePrev}
-          aria-label="Previous testimonial"
-        >
-          &#x2039;
-        </button>
-
         <div className="bg-white rounded-2xl shadow-xl mx-auto px-8 md:px-20 py-12 w-full max-w-3xl flex flex-col items-center relative">
           {/* Quotation icon (top-left) */}
           <span className="absolute top-6 left-10 text-[#e5eed8] text-3xl select-none">&#10077;</span>
@@ -101,15 +87,6 @@ function Testimonials() {
           <div className="font-serif text-[#4a3728] text-lg mb-1">{testimonials[activeIndex].name}</div>
           <div className="text-[#b5ad9a] text-sm">{testimonials[activeIndex].role}</div>
         </div>
-
-        {/* Right arrow */}
-        <button
-          className="absolute right-0 z-10 bg-white rounded-full shadow-md w-10 h-10 flex items-center justify-center text-[#a6b696] hover:scale-110 transition-transform"
-          onClick={handleNext}
-          aria-label="Next testimonial"
-        >
-          &#x203a;
-        </button>
       </div>
 
       {/* Carousel dots */}

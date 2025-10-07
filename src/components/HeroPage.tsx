@@ -1,5 +1,7 @@
 import React from 'react'
 import SideNav from './SideNav'
+import HeroDecor from './HeroDecor'
+import HeroScene from './HeroScene'
 
 function HeroPage() {
     // Interactive cursor and particle effects
@@ -236,6 +238,11 @@ function HeroPage() {
             </svg>
           </div>
         </div>
+
+        {/* New decorative ambient layer behind content */}
+        <HeroDecor />
+        {/* Foreground ambient scene elements placed around hero (not behind text/buttons) */}
+        <HeroScene />
 
         {/* Cursor particles container */}
         <div id="cursor-particles" className="absolute inset-0 pointer-events-none"></div>

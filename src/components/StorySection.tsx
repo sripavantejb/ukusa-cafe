@@ -1,5 +1,5 @@
 const mainImg = 'https://res.cloudinary.com/dqataciy5/image/upload/v1759820113/Screenshot_2025-10-07_at_12.25.03_PM_bxgw8s.png'; // Story large image
-const miniImg = 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=300&q=80'; // Coffee and pastries
+const miniImg = 'https://res.cloudinary.com/dqataciy5/image/upload/v1759819275/ukusa_logo_draft_kxmgby.png'; // Ukusa Cafe logo (matches hero)
 
 const StorySection = () => (
   <div className="bg-[#f5f1ed] py-24 flex flex-col items-center px-4">
@@ -16,10 +16,7 @@ const StorySection = () => (
           alt="Coffee and pastries close-up"
           className="absolute left-[60%] top-[65%] w-40 h-28 rounded-lg border-4 border-white shadow-lg object-cover bg-[#eee]"
         />
-        {/* Leaf icon accent */}
-        <span className="absolute top-3 left-3 bg-[#e5eed8] rounded-full p-2">
-          <svg width="28" height="28" fill="none"><path d="M14 4C19.5 9.5 19.5 18.5 14 24C8.5 18.5 8.5 9.5 14 4Z" stroke="#99ad83" strokeWidth="2"/></svg>
-        </span>
+        
       </div>
       {/* Story text */}
       <div className="md:w-[55%] flex flex-col items-start">

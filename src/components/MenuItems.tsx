@@ -1,3 +1,4 @@
+ 
 
 const menuItems = [
     {
@@ -71,11 +72,7 @@ function MenuItems() {
             <h3 className="font-serif text-2xl text-[#4a3728] mb-2">{item.title}</h3>
             {/* Description */}
             <p className="text-[#6b5444] text-base font-light mb-6">{item.description}</p>
-            {/* CTA */}
-            <button className="text-[#4a3728] font-medium text-sm px-4 py-2 rounded transition-all hover:bg-[#f5f1ed] flex items-center gap-1">
-              ORDER NOW
-              <span>&rarr;</span>
-            </button>
+            {/* CTA removed per request */}
           </div>
         </div>
       ))}

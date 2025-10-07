@@ -16,6 +16,14 @@ type MenuSection = {
   columns?: ('item'|'price'|'description'|'category')[];
 };
 
+type WishlistItem = {
+  sectionId: string;
+  item: string;
+  price: string;
+};
+
+const WISHLIST_STORAGE_KEY = 'ukusa_wishlist';
+
 const sections: MenuSection[] = [
   {
     id: 'beverages-hot-coffee',
@@ -232,21 +240,10 @@ const sections: MenuSection[] = [
   }
 ];
 
-function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
-  return (
-    <div className="mb-6">
-      <h3 className="font-serif text-3xl md:text-4xl text-[#4a3728] font-normal tracking-tight animate-fade-in-up">
-        {title}
-      </h3>
-      {subtitle && (
-        <p className="text-[#8b7355] text-sm md:text-base mt-1 italic animate-fade-in-up animation-delay-200">{subtitle}</p>
-      )}
-      <div className="mt-4 w-16 border-t-2 border-[#b5ad9a]" />
-    </div>
-  )
-}
+// SectionHeader kept previously is no longer used
 
-function Table({ items, columns }: { items: MenuItem[]; columns: NonNullable<MenuSection['columns']> }) {
+// Table kept for modal rendering only
+function Table({ items, columns, sectionId, isLiked, toggleLike }: { items: MenuItem[]; columns: NonNullable<MenuSection['columns']>; sectionId: string; isLiked: (key: string) => boolean; toggleLike: (w: WishlistItem) => void; }) {
   return (
     <>
       {/* Desktop and tablets */}
@@ -259,44 +256,71 @@ function Table({ items, columns }: { items: MenuItem[]; columns: NonNullable<Men
                   {c === 'item' ? 'Item' : c === 'price' ? 'Price' : c === 'description' ? 'Description' : 'Category'}
                 </th>
               ))}
+              <th className="px-4 py-3 text-sm tracking-wide text-[#8b7355] font-medium text-right">Wish</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((row, idx) => (
-              <tr key={row.item + idx} className={idx % 2 ? 'bg-white' : 'bg-[#FFFEFC]'}>
-                {columns.map((c) => (
-                  <td key={c} className={`px-6 py-4 text-[#6b5444] ${c==='price' ? 'whitespace-nowrap text-right' : c==='item' ? 'font-medium text-[#4a3728]' : 'align-top'}`}>
-                    {c === 'category' ? row.category : c === 'description' ? row.description : c === 'item' ? row.item : row.price}
+            {items.map((row, idx) => {
+              const key = `${sectionId}::${row.item}`
+              const liked = isLiked(key)
+              return (
+                <tr key={row.item + idx} className={idx % 2 ? 'bg-white' : 'bg-[#FFFEFC]'}>
+                  {columns.map((c) => (
+                    <td key={c} className={`px-6 py-4 text-[#6b5444] ${c==='price' ? 'whitespace-nowrap text-right' : c==='item' ? 'font-medium text-[#4a3728]' : 'align-top'}`}>
+                      {c === 'category' ? row.category : c === 'description' ? row.description : c === 'item' ? row.item : row.price}
+                    </td>
+                  ))}
+                  <td className="px-4 py-4 text-right">
+                    <button
+                      aria-label={liked ? 'Remove from wishlist' : 'Add to wishlist'}
+                      onClick={() => toggleLike({ sectionId, item: row.item, price: row.price })}
+                      className={`inline-flex items-center justify-center w-9 h-9 rounded-full border transition-colors ${liked ? 'bg-[#6b5444] text-white border-[#6b5444]' : 'bg-white text-[#6b5444] border-[#eee] hover:bg-[#faf6ea]'}`}
+                    >
+                      {liked ? '♥' : '♡'}
+                    </button>
                   </td>
-                ))}
-              </tr>
-            ))}
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3 animate-fade-in-up animation-delay-200">
-        {items.map((row, idx) => (
-          <div key={row.item + idx} className="rounded-2xl border border-[#eee] bg-white/90 shadow-sm px-4 py-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  {row.category && (
-                    <span className="text-[10px] uppercase tracking-[0.18em] bg-[#faf6ea] text-[#8b7355] px-2 py-1 rounded-full">
-                      {row.category}
-                    </span>
+        {items.map((row, idx) => {
+          const key = `${sectionId}::${row.item}`
+          const liked = isLiked(key)
+          return (
+            <div key={row.item + idx} className="rounded-2xl border border-[#eee] bg-white/90 shadow-sm px-4 py-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    {row.category && (
+                      <span className="text-[10px] uppercase tracking-[0.18em] bg-[#faf6ea] text-[#8b7355] px-2 py-1 rounded-full">
+                        {row.category}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[#4a3728] font-medium mt-1 break-words">{row.item}</div>
+                  {row.description && (
+                    <div className="text-[#6b5444] text-xs mt-1 leading-relaxed">{row.description}</div>
                   )}
                 </div>
-                <div className="text-[#4a3728] font-medium mt-1 break-words">{row.item}</div>
-                {row.description && (
-                  <div className="text-[#6b5444] text-xs mt-1 leading-relaxed">{row.description}</div>
-                )}
+                <div className="flex flex-col items-end gap-2">
+                  <div className="text-[#4a3728] font-semibold whitespace-nowrap ml-2">{row.price}</div>
+                  <button
+                    aria-label={liked ? 'Remove from wishlist' : 'Add to wishlist'}
+                    onClick={() => toggleLike({ sectionId, item: row.item, price: row.price })}
+                    className={`inline-flex items-center justify-center w-9 h-9 rounded-full border transition-colors ${liked ? 'bg-[#6b5444] text-white border-[#6b5444]' : 'bg-white text-[#6b5444] border-[#eee] hover:bg-[#faf6ea]'}`}
+                  >
+                    {liked ? '♥' : '♡'}
+                  </button>
+                </div>
               </div>
-              <div className="text-[#4a3728] font-semibold whitespace-nowrap ml-2">{row.price}</div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </>
   )
@@ -315,7 +339,39 @@ function Menu() {
 
   const [activeSection, setActiveSection] = React.useState<MenuSection | null>(null)
   const [showModal, setShowModal] = React.useState(false)
-  const [showCategorySheet, setShowCategorySheet] = React.useState(false)
+  
+  const [showWishlistSheet, setShowWishlistSheet] = React.useState(false)
+
+  const [wishlist, setWishlist] = React.useState<WishlistItem[]>([])
+
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem(WISHLIST_STORAGE_KEY)
+      if (raw) setWishlist(JSON.parse(raw))
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist))
+    } catch {
+      // ignore
+    }
+  }, [wishlist])
+
+  const itemKey = (w: WishlistItem) => `${w.sectionId}::${w.item}`
+  const isLiked = (key: string) => wishlist.some(w => `${w.sectionId}::${w.item}` === key)
+  const toggleLike = (w: WishlistItem) => {
+    setWishlist(prev => {
+      const k = itemKey(w)
+      const exists = prev.some(p => itemKey(p) === k)
+      if (exists) return prev.filter(p => itemKey(p) !== k)
+      return [...prev, w]
+    })
+  }
+  const clearWishlist = () => setWishlist([])
 
   const openModal = (section: MenuSection) => {
     setActiveSection(section)
@@ -354,15 +410,53 @@ function Menu() {
         <p className="text-[#a89c8a] italic font-light mt-4 animate-fade-in-up animation-delay-400">Where nature meets you and you meet experience</p>
       </div>
 
-      <div className="max-w-6xl mx-auto grid md:grid-cols-[220px,1fr] gap-8">
-        {/* Sticky sidebar */}
-        <aside className="hidden md:block sticky top-24 h-max bg-white/70 border border-[#eee] rounded-2xl shadow-sm p-4 animate-fade-in-up">
+      {/* Wishlist bar */}
+      <div className="max-w-6xl mx-auto mb-6 animate-fade-in-up animation-delay-400">
+        <div className="rounded-2xl border border-[#eee] bg-white/80 backdrop-blur-sm shadow-sm p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-[#8b7355]">Your Wishlist</span>
+              <span className="text-xs text-white bg-[#6b5444] rounded-full px-2 py-0.5">{wishlist.length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowWishlistSheet(true)} className="text-[#4a3728]/80 hover:text-[#4a3728] text-sm underline">View</button>
+              {wishlist.length > 0 && (
+                <button onClick={clearWishlist} className="text-[#6b5444] bg-[#faf6ea] border border-[#eee] rounded-full px-3 py-1 text-sm hover:bg-[#f3ecde]">Clear</button>
+              )}
+            </div>
+          </div>
+          <div className="mt-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {wishlist.length === 0 ? (
+                <div className="text-xs text-[#8b7355] italic">Tap the heart on any item to add it here.</div>
+              ) : (
+                wishlist.map((w, i) => (
+                  <div
+                    key={`${w.sectionId}-${w.item}-${i}`}
+                    className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-[#FFFEFC] border border-[#eee] hover:bg-[#faf6ea] text-[#4a3728]/90"
+                  >
+                    <span className="text-[#4a3728] text-sm">{w.item}</span>
+                    <button aria-label="Remove" onClick={() => toggleLike(w)} className="text-[#6b5444]">×</button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Browse only on-page; modal still shows details on click */}
+      <div className="max-w-3xl mx-auto">
+        <aside className="bg-white/70 border border-[#eee] rounded-2xl shadow-sm p-4 animate-fade-in-up">
+          <div className="mb-4 pb-3 border-b border-[#f0eadd]">
+            <div className="text-xs uppercase tracking-[0.22em] text-[#8b7355]">Quick Browse</div>
+          </div>
           {groups.map(g => (
             <div key={g.id} className="mb-4">
               <div className="text-sm uppercase tracking-[0.18em] text-[#8b7355] mb-2" style={{ color: g.color }}>{g.title}</div>
-              <div className="flex flex-col gap-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {groupToSections[g.id].map(s => (
-                  <button key={s.id} onClick={() => openModal(s)} className="text-left text-[#4a3728]/80 hover:text-[#4a3728] px-3 py-2 rounded-lg hover:bg-[#faf6ea] transition-colors">
+                  <button key={s.id} onClick={() => openModal(s)} className="text-left text-[#4a3728]/80 hover:text-[#4a3728] px-3 py-2 rounded-lg bg-[#FFFEFC] border border-[#eee] hover:bg-[#faf6ea] transition-colors">
                     {s.title}
                   </button>
                 ))}
@@ -370,51 +464,16 @@ function Menu() {
             </div>
           ))}
         </aside>
-
-        {/* Main content */}
-        <div className="space-y-14">
-          {/* Beverages group title */}
-          <div className="rounded-2xl p-6 bg-[#FDFCFA] border border-[#f0eadd] shadow-sm animate-fade-in-up">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="w-2 h-2 rounded-full" style={{ background: '#6b5444' }}></span>
-              <h2 className="font-serif text-2xl md:text-3xl text-[#4a3728]">Beverages</h2>
-            </div>
-            <p className="text-[#8b7355] text-sm">Hot & cold signatures, teas and more</p>
-          </div>
-
-          {groupToSections['beverages'].map(sec => (
-            <section key={sec.id} id={sec.id} className="scroll-mt-28">
-              <SectionHeader title={sec.title} subtitle={sec.subtitle} />
-              <Table items={sec.items} columns={sec.columns || ['item','price']} />
-            </section>
-          ))}
-
-          {/* Food group title */}
-          <div className="rounded-2xl p-6 bg-[#F6F5F3] border border-[#eae8e3] shadow-sm animate-fade-in-up">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="w-2 h-2 rounded-full" style={{ background: '#99ad83' }}></span>
-              <h2 className="font-serif text-2xl md:text-3xl text-[#4a3728]">Food Menu</h2>
-            </div>
-            <p className="text-[#8b7355] text-sm">From soups to pizzas, crafted fresh</p>
-          </div>
-
-          {groupToSections['food'].map(sec => (
-            <section key={sec.id} id={sec.id} className="scroll-mt-28">
-              <SectionHeader title={sec.title} />
-              <Table items={sec.items} columns={sec.columns || ['item','price']} />
-            </section>
-          ))}
-        </div>
       </div>
 
       {/* Modal overlay for section details */}
       {showModal && activeSection && (
-        <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center p-3 md:p-6">
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-3 md:p-6 overflow-y-auto" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm opacity-100" onClick={closeModal}></div>
 
           {/* Modal content */}
-          <div className="relative w-full max-w-3xl bg-gradient-to-br from-[#FFFEFC] to-white border border-[#eee] rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up">
+          <div className="relative w-full max-w-3xl bg-gradient-to-br from-[#FFFEFC] to-white border border-[#eee] rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up max-h-[90vh] md:max-h-[85vh] flex flex-col mt-8 md:mt-12">
             {/* Header */}
             <div className="px-5 md:px-6 py-4 bg-[#faf6ea] border-b border-[#eee] flex items-center justify-between">
               <div>
@@ -427,52 +486,45 @@ function Menu() {
             </div>
 
             {/* Body */}
-            <div className="p-4 md:p-6">
-              <Table items={activeSection.items} columns={activeSection.columns || ['item','price']} />
+            <div className="p-4 md:p-6 overflow-y-auto">
+              <Table items={activeSection.items} columns={activeSection.columns || ['item','price']} sectionId={activeSection.id} isLiked={isLiked} toggleLike={toggleLike} />
             </div>
           </div>
         </div>
       )}
 
-      {/* Mobile category bottom sheet */}
-      <div className="md:hidden">
-        {/* Floating button */}
-        <button
-          onClick={() => setShowCategorySheet(true)}
-          className="fixed top-20 right-4 z-40 bg-[#6b5444] text-white px-5 py-3 rounded-full shadow-2xl button-glow"
-          aria-label="Browse categories"
-        >
-          Browse Menu
-        </button>
-
-        {showCategorySheet && (
+      {/* Mobile wishlist sheet */}
+        {showWishlistSheet && (
           <div className="fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowCategorySheet(false)}></div>
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowWishlistSheet(false)}></div>
             <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl border-t border-[#eee] shadow-2xl p-4 max-h-[70vh] overflow-y-auto animate-fade-in-up">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-xs uppercase tracking-[0.18em] text-[#8b7355]">All Categories</div>
-                <button onClick={() => setShowCategorySheet(false)} aria-label="Close" className="w-9 h-9 rounded-full bg-[#faf6ea] text-[#6b5444] border border-[#eee]">×</button>
-              </div>
-              {groups.map(g => (
-                <div key={g.id} className="mb-4">
-                  <div className="text-sm font-semibold text-[#4a3728] mb-2">{g.title}</div>
-                  <div className="grid grid-cols-1 gap-2">
-                    {groupToSections[g.id].map(s => (
-                      <button
-                        key={s.id}
-                        onClick={() => { setShowCategorySheet(false); openModal(s); }}
-                        className="text-left px-3 py-3 rounded-xl bg-[#FFFEFC] border border-[#eee] hover:bg-[#faf6ea] text-[#4a3728]/90"
-                      >
-                        {s.title}
-                      </button>
-                    ))}
-                  </div>
+                <div className="text-xs uppercase tracking-[0.18em] text-[#8b7355]">Wishlist</div>
+                <div className="flex items-center gap-2">
+                  {wishlist.length > 0 && (
+                    <button onClick={clearWishlist} className="text-[#6b5444] bg-[#faf6ea] border border-[#eee] rounded-full px-3 py-1 text-sm">Clear</button>
+                  )}
+                  <button onClick={() => setShowWishlistSheet(false)} aria-label="Close" className="w-9 h-9 rounded-full bg-[#faf6ea] text-[#6b5444] border border-[#eee]">×</button>
                 </div>
-              ))}
+              </div>
+              {wishlist.length === 0 ? (
+                <div className="text-sm text-[#8b7355] italic">No items yet. Tap the heart on any item.</div>
+              ) : (
+                <div className="space-y-2">
+                  {wishlist.map((w, i) => (
+                    <div key={`${w.sectionId}-${w.item}-${i}`} className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#FFFEFC] border border-[#eee]">
+                      <div className="text-[#4a3728]">
+                        <div className="font-medium">{w.item}</div>
+                        <div className="text-xs text-[#8b7355]">{w.price}</div>
+                      </div>
+                      <button onClick={() => toggleLike(w)} className="text-[#6b5444]">Remove</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 }
