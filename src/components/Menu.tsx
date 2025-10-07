@@ -412,7 +412,7 @@ function Menu() {
 
       {/* Wishlist bar */}
       <div className="max-w-3xl mx-auto mb-6 animate-fade-in-up animation-delay-400">
-        <div className="rounded-2xl border border-[#eee] bg-white/80 backdrop-blur-sm shadow-sm p-3">
+        <div className="bg-white/70 border border-[#eee] rounded-2xl shadow-sm p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="text-sm text-[#8b7355]">Your Wishlist</span>

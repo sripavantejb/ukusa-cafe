@@ -1,4 +1,3 @@
-import React from 'react'
 
 const sampleImages = [
   'https://res.cloudinary.com/dqataciy5/image/upload/v1759844446/WhatsApp_Image_2025-10-07_at_19.09.20_2_gydkvl.jpg',

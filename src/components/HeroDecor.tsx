@@ -17,14 +17,14 @@ const floatY = (distance: number, duration: number) => ({
   },
   transition: {
     duration,
-    ease: 'easeInOut',
+    ease: 'easeInOut' as const,
     repeat: Infinity,
   }
 })
 
 const slowRotate = (deg: number, duration: number) => ({
   animate: { rotate: [0, deg, 0] },
-  transition: { duration, ease: 'easeInOut', repeat: Infinity }
+  transition: { duration, ease: 'easeInOut' as const, repeat: Infinity }
 })
 
 const CoffeeBean: React.FC<{ className?: string; opacity?: number; scale?: number } & DecorPosition> = ({ className = '', opacity = 0.5, scale = 1, ...pos }) => (
@@ -61,7 +61,7 @@ const AromaSwirl: React.FC<{ className?: string; opacity?: number; scale?: numbe
           strokeLinecap="round"
           initial={{ pathLength: 0, opacity: 0.3 }}
           animate={{ pathLength: 1, opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' as const }}
         />
       </svg>
     </div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 function HeroScene() {
@@ -17,19 +16,19 @@ function HeroScene() {
           'radial-gradient(45% 45% at 80% 50%, rgba(200,174,144,0.22), transparent 65%)',
           'radial-gradient(50% 50% at 25% 70%, rgba(220,202,178,0.2), transparent 65%)',
         ]}}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' as const }}
       />
 
       {/* Parallax window scene (kept to sides, not overlapping hero center) */}
       <motion.div className="absolute left-6 top-10 w-44 h-28 rounded-lg overflow-hidden shadow-sm" style={{ background: '#efe6db', border: '1px solid #e0d6c7' }}
-        animate={{ y: [0, -4, 0] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}>
+        animate={{ y: [0, -4, 0] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' as const }}>
         <div className="absolute inset-x-0 top-0 h-6" style={{ background: '#d9c9b4' }} />
         <motion.div className="absolute bottom-3 left-3 right-3 h-8 rounded-md" style={{ background: '#e9dfd2' }}
-          animate={{ x: [0, 6, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
+          animate={{ x: [0, 6, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' as const }} />
         <motion.div className="absolute bottom-6 left-8 w-8 h-6 rounded-sm" style={{ background: '#ceb89a' }}
-          animate={{ y: [0, -3, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }} />
+          animate={{ y: [0, -3, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' as const }} />
         <motion.div className="absolute bottom-6 right-10 w-10 h-6 rounded-sm" style={{ background: '#ceb89a' }}
-          animate={{ y: [0, -2, 0] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }} />
+          animate={{ y: [0, -2, 0] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' as const }} />
       </motion.div>
 
       {/* Coffee cup with steam and latte art (left-bottom side) */}
@@ -46,11 +45,11 @@ function HeroScene() {
             fill="#ddc7a7" opacity="0.85"
             initial={{ opacity: 0.4 }}
             animate={{ opacity: [0.4, 0.9, 0.4] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' as const }}
           />
           {/* Steam */}
-          <motion.path d="M45 45 c-8 -15 12 -18 2 -34" fill="none" stroke="#cbb79a" strokeWidth="2" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}/>
-          <motion.path d="M60 50 c-6 -12 10 -16 1 -28" fill="none" stroke="#cbb79a" strokeWidth="1.5" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1 }}/>
+          <motion.path d="M45 45 c-8 -15 12 -18 2 -34" fill="none" stroke="#cbb79a" strokeWidth="2" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' as const }}/>
+          <motion.path d="M60 50 c-6 -12 10 -16 1 -28" fill="none" stroke="#cbb79a" strokeWidth="1.5" strokeLinecap="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' as const, repeatDelay: 1 }}/>
         </svg>
       </div>
 
@@ -63,14 +62,14 @@ function HeroScene() {
           {/* pour stream */}
           <motion.path d="M70 32 C80 50, 70 60, 60 72" stroke="#6b4c34" strokeWidth="3" fill="none" strokeLinecap="round"
             strokeDasharray="60" strokeDashoffset="60"
-            animate={{ strokeDashoffset: [60, 0, 60] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }} />
+            animate={{ strokeDashoffset: [60, 0, 60] }} transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' as const }} />
         </svg>
       </div>
 
       {/* Gently falling coffee beans along sides */}
       {Array.from({ length: 6 }).map((_, i) => (
         <motion.div key={i} className="absolute" style={{ left: i % 2 ? 'auto' : `${4 + i*2}%`, right: i % 2 ? `${6 + i*2}%` : 'auto', top: `${8 + i*12}%` }}
-          animate={{ y: [0, 12, 0], rotate: [0, i%2?6:-6, 0] }} transition={{ duration: 8 + (i%3)*2, repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 }}>
+          animate={{ y: [0, 12, 0], rotate: [0, i%2?6:-6, 0] }} transition={{ duration: 8 + (i%3)*2, repeat: Infinity, ease: 'easeInOut' as const, delay: i * 0.6 }}>
           <svg viewBox="0 0 24 24" width="16" height="20" style={{ opacity: 0.5 }}>
             <ellipse cx="12" cy="12" rx="7.5" ry="11" fill="#5a3d2b"/>
             <path d="M9 8c0-2 2-4 3.5-4s3.5 2 3.5 4" stroke="#3b281d" strokeWidth="1" fill="none"/>
@@ -79,13 +78,13 @@ function HeroScene() {
       ))}
 
       {/* Pastries floating in softly around sides */}
-      <motion.div className="absolute right-8 top-16" animate={{ y: [0, -10, 0], rotate: [0, 8, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}>
+      <motion.div className="absolute right-8 top-16" animate={{ y: [0, -10, 0], rotate: [0, 8, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' as const }}>
         <svg viewBox="0 0 64 40" width="56" height="32">
           <path d="M4 28c3-10 12-16 28-16s25 6 28 16c-6 4-18 6-28 6S10 32 4 28z" fill="none" stroke="#d4b98c" strokeWidth="2"/>
           <path d="M10 26c2-5 9-10 22-10" fill="none" stroke="#c7a972" strokeWidth="1.5"/>
         </svg>
       </motion.div>
-      <motion.div className="absolute right-16 bottom-16" animate={{ y: [0, -8, 0], rotate: [0, -6, 0] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}>
+      <motion.div className="absolute right-16 bottom-16" animate={{ y: [0, -8, 0], rotate: [0, -6, 0] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' as const }}>
         <svg viewBox="0 0 64 40" width="48" height="28">
           <path d="M4 28c3-10 12-16 28-16s25 6 28 16c-6 4-18 6-28 6S10 32 4 28z" fill="none" stroke="#e0c79e" strokeWidth="2"/>
         </svg>
@@ -103,7 +102,7 @@ function HeroScene() {
       </div>
 
       {/* Map pin bounce with cafe icon (top-right area) */}
-      <motion.div className="absolute right-8 top-1/2" animate={{ y: [0, -6, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}>
+      <motion.div className="absolute right-8 top-1/2" animate={{ y: [0, -6, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' as const }}>
         <svg width="30" height="40" viewBox="0 0 30 40">
           <path d="M15 38 c-8 -12 -12 -18 -12 -24 a12 12 0 1 1 24 0 c0 6 -4 12 -12 24z" fill="#b48c67"/>
           <circle cx="15" cy="14" r="5" fill="#fff5ea"/>
@@ -113,7 +112,7 @@ function HeroScene() {
 
       {/* Musical notes floating (top-right) */}
       {[0,1,2].map((n) => (
-        <motion.div key={n} className="absolute right-6" style={{ top: `${10 + n*6}%` }} animate={{ y: [0, -10, 0] }} transition={{ duration: 8 + n*2, repeat: Infinity, ease: 'easeInOut' }}>
+        <motion.div key={n} className="absolute right-6" style={{ top: `${10 + n*6}%` }} animate={{ y: [0, -10, 0] }} transition={{ duration: 8 + n*2, repeat: Infinity, ease: 'easeInOut' as const }}>
           <svg width="16" height="16" viewBox="0 0 16 16" style={{ opacity: 0.5 }}>
             <path d="M4 4 v6 a2 2 0 1 0 1 1 V4 h7 v6 a2 2 0 1 0 1 1 V4" fill="none" stroke="#b9a184" strokeWidth="1"/>
           </svg>
