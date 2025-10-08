@@ -4,31 +4,17 @@ import HeroDecor from './HeroDecor'
 import HeroScene from './HeroScene'
 
 function HeroPage() {
-    // Interactive cursor and particle effects
+    // Parallax effects for swirls only
     React.useEffect(() => {
-        const cursor = document.getElementById('custom-cursor');
-        const particlesContainer = document.getElementById('cursor-particles');
         const parallaxNodes: HTMLElement[] = Array.from(document.querySelectorAll('.parallax-swirl')) as HTMLElement[];
         let mouseX = 0;
         let mouseY = 0;
-        // Track hover state (not used for logic, only for potential future tweaks)
 
-        // Custom cursor movement
+        // Parallax move for swirls
         const handleMouseMove = (e: MouseEvent) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            
-            if (cursor) {
-                cursor.style.left = mouseX - 12 + 'px';
-                cursor.style.top = mouseY - 12 + 'px';
-            }
 
-            // Create particles on mouse move
-            if (particlesContainer && Math.random() > 0.7) {
-                createParticle(mouseX, mouseY);
-            }
-
-            // Parallax move for swirls
             parallaxNodes.forEach((el, i) => {
                 const depth = 8 + i * 4;
                 const tx = (mouseX / window.innerWidth - 0.5) * depth;
@@ -37,91 +23,8 @@ function HeroPage() {
             });
         };
 
-        // Create floating particles
-        const createParticle = (x: number, y: number) => {
-            if (!particlesContainer) return;
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
-            
-            // Randomize particle properties
-            const size = Math.random() * 4 + 2;
-            const duration = Math.random() * 2 + 1;
-            const delay = Math.random() * 0.5;
-            
-            particle.style.width = size + 'px';
-            particle.style.height = size + 'px';
-            particle.style.animationDuration = duration + 's';
-            particle.style.animationDelay = delay + 's';
-            
-            particlesContainer.appendChild(particle);
-            
-            // Remove particle after animation
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, (duration + delay) * 1000);
-        };
-
-        // Enhanced particle creation near button and scroll area
-        const createButtonParticles = () => {
-            const button = document.querySelector('button');
-            if (button) {
-                const rect = button.getBoundingClientRect();
-                for (let i = 0; i < 5; i++) {
-                    setTimeout(() => {
-                        createParticle(
-                            rect.left + Math.random() * rect.width,
-                            rect.top + Math.random() * rect.height
-                        );
-                    }, i * 100);
-                }
-            }
-        };
-
-        // Hover effects for floating elements
-        const handleMouseEnter = () => {
-            if (cursor) {
-                cursor.style.transform = 'scale(1.5)';
-                cursor.style.opacity = '0.6';
-            }
-        };
-
-        const handleMouseLeave = () => {
-            if (cursor) {
-                cursor.style.transform = 'scale(1)';
-                cursor.style.opacity = '0.3';
-            }
-        };
-
-        // Add event listeners
+        // Add event listener
         document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseenter', handleMouseEnter);
-        document.addEventListener('mouseleave', handleMouseLeave);
-
-        // Button hover effect
-        const button = document.querySelector('button');
-        if (button) {
-            button.addEventListener('mouseenter', createButtonParticles);
-        }
-
-        // Scroll area particle effect
-        const scrollArea = document.querySelector('.animate-bounce-slow');
-        if (scrollArea) {
-            scrollArea.addEventListener('mouseenter', () => {
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        const rect = scrollArea.getBoundingClientRect();
-                        createParticle(
-                            rect.left + Math.random() * rect.width,
-                            rect.top + Math.random() * rect.height
-                        );
-                    }, i * 200);
-                }
-            });
-        }
 
         // Reveal on intersection
         const io = new IntersectionObserver((entries) => {
@@ -134,17 +37,12 @@ function HeroPage() {
         // Cleanup
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseenter', handleMouseEnter);
-            document.removeEventListener('mouseleave', handleMouseLeave);
-            if (button) {
-                button.removeEventListener('mouseenter', createButtonParticles);
-            }
             io.disconnect()
         };
     }, []);
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f5f1ed] to-[#f0ebe5] flex flex-col items-center justify-center px-4 relative overflow-hidden cursor-none">
+      <div className="min-h-screen bg-gradient-to-br from-[#f5f1ed] to-[#f0ebe5] flex flex-col items-center justify-center px-4 relative overflow-hidden">
         {/* Background subtle pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-20 w-32 h-32 bg-[#8b7355] rounded-full blur-3xl"></div>
@@ -244,8 +142,6 @@ function HeroPage() {
         {/* Foreground ambient scene elements placed around hero (not behind text/buttons) */}
         <HeroScene />
 
-        {/* Cursor particles container */}
-        <div id="cursor-particles" className="absolute inset-0 pointer-events-none"></div>
         
         <div className="text-center max-w-5xl mx-auto relative z-10">
           {/* Ukusa Logo */}
@@ -340,10 +236,6 @@ function HeroPage() {
           </div>
         </div>
 
-        {/* Custom cursor */}
-        <div id="custom-cursor" className="fixed w-6 h-6 pointer-events-none z-50">
-          <div className="w-full h-full rounded-full bg-[#8b7355] opacity-30 animate-pulse"></div>
-        </div>
         {/* Global right/ bottom dock navbar */}
         <SideNav />
       </div>
